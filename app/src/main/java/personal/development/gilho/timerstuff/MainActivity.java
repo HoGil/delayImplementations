@@ -2,6 +2,7 @@ package personal.development.gilho.timerstuff;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final int MY_MESSAGE_ID = 93;
     private TextView repeat;
     private Handler mHandler;
     private Thread backgroundThread;
@@ -29,20 +31,22 @@ public class MainActivity extends AppCompatActivity {
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message message) {
-                Bundle bundle = message.getData();
-                uiString = bundle.getString("count");
-                repeat.setText("Repeat: " + uiString);
+                switch (message.what) {
+                    case MY_MESSAGE_ID:
+                        repeat.setText("Repeat: " + message.arg1);
+                        break;
+                    default:
+                        Log.w(TAG, "Invalid message received: " + message.what);
+                        break;
+                }
             }
         };
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() called by Gil ");
-
     }
 
     @Override
@@ -71,14 +75,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 Log.d(TAG, "Background Thread started by Gil");
-                Bundle bundle = new Bundle();
-                Message message = new Message();
 
                 for (int i = 1; i < 11; i++) {
 
-                    bundle.putString("count", ""+i);
-                    message.setData(bundle);
-                    mHandler.sendMessage(message);
+                    String someVar = "hello";
+                    Message msg = mHandler.obtainMessage(MY_MESSAGE_ID, i, 0);
+                    msg.sendToTarget();
 
                     try {
                         // delay for 30 seconds
