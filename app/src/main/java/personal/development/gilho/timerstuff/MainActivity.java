@@ -12,7 +12,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int MY_MESSAGE_ID = 93;
+    //private static final int MY_MESSAGE_ID = 93;
     private TextView repeat;
     private Handler mHandler;
     private Thread backgroundThread;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message message) {
                 switch (message.what) {
-                    case MY_MESSAGE_ID:
+                    case 93:
                         repeat.setText("Repeat: " + message.arg1);
                         break;
                     default:
@@ -79,7 +79,10 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 1; i < 11; i++) {
 
                     String someVar = "hello";
-                    Message msg = mHandler.obtainMessage(MY_MESSAGE_ID, i, 0);
+
+                    // not creating new message - you are extracting the message of the UI Thread handler
+                    Message msg = mHandler.obtainMessage(93, i, 0);
+                    // sends message to the handler the message was obtained from
                     msg.sendToTarget();
 
                     try {
